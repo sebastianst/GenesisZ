@@ -1,0 +1,6 @@
+/lib
+/include
+/bin
+/pip-selfcheck.json
+/tags
+__pycache__
