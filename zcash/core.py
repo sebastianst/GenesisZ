@@ -1,4 +1,5 @@
 from bitcoin.core import *
+from bitcoin.core.serialize import *
 import struct
 
 SOL_SIZE = 1344
@@ -60,24 +61,37 @@ class CZBlockHeader(CEquihashHeader):
     """A Zcash Block header"""
     __slots__ = ['solution']
 
+    def checkSolutionSize(self):
+        # Currently (v. 4), the only accepted solution size is 1344
+        if self.nVersion == 4:
+            assert len(self.solution) == SOL_SIZE
+
     def __init__(self, nVersion=4, hashPrevBlock=ZERO32,
             hashMerkleRoot=ZERO32, hashReserved=ZERO32, nTime=0, nBits=0, nNonce=ZERO32,
             solution=b'\x00'*SOL_SIZE):
-        super(CZBlockHeader, self).__init__(nVersion, hashPrevBlock, hashMerkleRoot, nTime, nBits, nNonce)
+        super().__init__(nVersion, hashPrevBlock, hashMerkleRoot, hashReserved,
+                nTime, nBits, nNonce)
         object.__setattr__(self, 'solution', solution)
+        self.checkSolutionSize()
 
-    def __init__(self, equihashHeader=CEquihashHeader(), solution=b'\x00'*SOL_SIZE):
-        self = equihashHeader
-        object.__setattr__(self, 'solution', solution)
+    @classmethod
+    def from_EquihashHeader(cls, equihashHeader=CEquihashHeader(), solution=b'\x00'*SOL_SIZE):
+        h = cls(equihashHeader.nVersion, equihashHeader.hashPrevBlock,
+                equihashHeader.hashMerkleRoot, equihashHeader.hashReserved,
+                equihashHeader.nTime, equihashHeader.nBits, equihashHeader.nNonce)
+        object.__setattr__(h, 'solution', solution)
+        h.checkSolutionSize()
+        return h
 
     @classmethod
     def stream_deserialize(cls, f):
-        self = super(CZBlockHeader, cls).stream_deserialize(f)
-        object.__setattr__(self, 'solution', BytesSerializer.stream_deserialize(f))
-        return self
+        h = super(CZBlockHeader, cls).stream_deserialize(f)
+        object.__setattr__(h, 'solution', BytesSerializer.stream_deserialize(f))
+        h.checkSolutionSize()
+        return h
 
     def stream_serialize(self, f):
-        super(CZBlockHeader, self).stream_serialize(f)
+        super().stream_serialize(f)
         BytesSerializer.stream_serialize(self.solution, f)
 
     def __repr__(self):
