@@ -9,14 +9,14 @@ class CEquihashHeader(Serializable): # TODO or make it ImmutableSerializable?
     __slots__ = ['nVersion', 'hashPrevBlock', 'hashMerkleRoot', 'hashReserved', 'nTime', 'nBits', 'nNonce']
 
     def __init__(self, nVersion=4, hashPrevBlock=ZERO32,
-            hashMerkleRoot=ZERO32, hashReserved=ZERO_QUAD, nTime=0, nBits=0, nNonce=ZERO32):
+            hashMerkleRoot=ZERO32, hashReserved=ZERO32, nTime=0, nBits=0, nNonce=ZERO32):
         object.__setattr__(self, 'nVersion', nVersion)
         assert len(hashPrevBlock) == 32
         object.__setattr__(self, 'hashPrevBlock', hashPrevBlock)
         assert len(hashMerkleRoot) == 32
         object.__setattr__(self, 'hashMerkleRoot', hashMerkleRoot)
         assert len(hashReserved) == 32
-        object.__setattr__(self, 'hashReserved', hashMerkleRoot)
+        object.__setattr__(self, 'hashReserved', hashReserved)
         object.__setattr__(self, 'nTime', nTime)
         object.__setattr__(self, 'nBits', nBits)
         assert len(nNonce) == 32
@@ -61,7 +61,7 @@ class CZBlockHeader(CEquihashHeader):
     __slots__ = ['solution']
 
     def __init__(self, nVersion=4, hashPrevBlock=ZERO32,
-            hashMerkleRoot=ZERO32, nTime=0, nBits=0, nNonce=ZERO32,
+            hashMerkleRoot=ZERO32, hashReserved=ZERO32, nTime=0, nBits=0, nNonce=ZERO32,
             solution=b'\x00'*SOL_SIZE):
         super(CZBlockHeader, self).__init__(nVersion, hashPrevBlock, hashMerkleRoot, nTime, nBits, nNonce)
         object.__setattr__(self, 'solution', solution)
