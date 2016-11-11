@@ -1,27 +1,6 @@
 from bitcoin.core import *
 import struct
 
-def compactSize_from_int(s):
-    BO = 'big' # TODO Check byteorder
-    assert 0 <= s <= 0xffffffffffffffff
-    if s <= 0xfc:
-        return s.to_bytes(1, byteorder=BO)
-    elif s <= 0xffff:
-        return [b'0xfd'] + s.to_bytes(2, byteorder=BO)
-    elif s <= 0xffffffff:
-        return [b'0xfe'] + s.to_bytes(4, byteorder=BO)
-    else:
-        return [b'0xff'] + s.to_bytes(8, byteorder=BO)
-
-def deserialize_compactSize(f):
-    csc = {0xdf: 'H', 0xfe: 'I', 0xff: 'Q'}
-    s = struct.unpack(b'<B', ser_read(f,1))
-    if s < 0xfd:
-        return s
-    else:
-        t = 2**(s-0xfc)
-        return struct.unpack('<{}s'.format(t), ser_read(f,t))
-
 SOL_SIZE = 1344
 ZERO32 = b'\x00'*32
 
