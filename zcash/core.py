@@ -81,7 +81,4 @@ class CZBlockHeader(CEquihashHeader):
         BytesSerializer.stream_serialize(self.solution, f)
 
     def __repr__(self):
-        return "%s(%i, lx(%s), lx(%s), %s, 0x%08x, lx(%s), lx(%s))" % \
-                (self.__class__.__name__, self.nVersion, b2lx(self.hashPrevBlock),
-                        b2lx(self.hashMerkleRoot), self.nTime, self.nBits,
-                        b2lx(self.nNonce), b2lx(self.solution))
+        return "%s, lx(%s))" % (super().__repr__()[:-1], b2lx(self.solution))
