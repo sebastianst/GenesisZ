@@ -110,3 +110,24 @@ class CZBlockHeader(CEquihashHeader):
 
     def __repr__(self):
         return "%s, lx(%s))" % (super().__repr__()[:-1], b2lx(self.solution))
+
+def IsValidSolution(block_header, nonce=None, solution=None):
+    """Check if the given solution leads to a valid block header.
+    solution or nonce can be ommitted, in which case the solution or nonce
+    contained in the given block header will be used. Othweise, an equihash
+    header (without solution) may be passed as block_header"""
+    if nonce:
+        block_header.nNonce = nonce
+    if not solution:
+        try:
+            solution = block_header.solution
+        except AttributeError:
+            raise Exception("No solution passed nor contained in block_header.")
+
+    h = CZBlockHeader.from_EquihashHeader(block_header, solution, nonce)
+    # Note: CheckProofOfWork also checks against Bitcoin main net Proof-of-work limit
+    try:
+        CheckProofOfWork(h.GetHash(), h.nBits)
+        return True
+    except CheckProofOfWorkError:
+        return False
