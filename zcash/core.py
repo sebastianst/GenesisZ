@@ -67,8 +67,8 @@ class CZBlockHeader(CEquihashHeader):
             assert len(self.solution) == SOL_SIZE
 
     def __init__(self, nVersion=4, hashPrevBlock=ZERO32,
-            hashMerkleRoot=ZERO32, hashReserved=ZERO32, nTime=0, nBits=0, nNonce=ZERO32,
-            solution=b'\x00'*SOL_SIZE):
+            hashMerkleRoot=ZERO32, hashReserved=ZERO32, nTime=0, nBits=0,
+            nNonce=ZERO32, solution=b'\x00'*SOL_SIZE):
         super().__init__(nVersion, hashPrevBlock, hashMerkleRoot, hashReserved,
                 nTime, nBits, nNonce)
         object.__setattr__(self, 'solution', solution)
