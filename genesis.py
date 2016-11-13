@@ -134,10 +134,14 @@ def findValidSolution(eh, solverCmd):
         if banner.startswith(b'Running'): # TODO Hardcoded last banner line!
             break
     verb('Solver banner: ' + stri(banner))
-    while(True):
+
+    while True:
         nonce, sols = parseSolutions(solver)
         verb('Solver returned %i solutions for nonce %s' % \
                 (len(sols), b2lx(nonce)))
+        for sol in sols:
+            if IsValidSolution(eh, nonce, sol):
+                return (sol, nonce)
 
     # TODO DUMMY
     return 'solution'.encode('ascii'), b'\xde\xad'
