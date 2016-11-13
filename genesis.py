@@ -127,7 +127,12 @@ def findValidSolution(eh, solverCmd):
         os._exit(1)
     except Exception as e:
         fatal("Failed to execute '%s': %s" % (self.solver_binary, e))
-    banner = yield from solver.stdout.readline()
+    # consume banner input until solutions pop up
+    banner = b''
+    while True:
+        banner += yield from solver.stdout.readline()
+        if banner.startswith(b'Running'): # TODO Hardcoded last banner line!
+            break
     verb('Solver banner: ' + stri(banner))
     while(True):
         nonce, sols = parseSolutions(solver)
