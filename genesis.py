@@ -111,9 +111,10 @@ def stri(b):
 
 def findValidSolution(eh, solverCmd):
     """find a valid equihash solution matching the target specified by nBits"""
-    verb('Starting solver...')
+    solverCmd.append(b2x(eh.serialize())) # TODO or b2lx?
+    verb('Starting solver with command %s' % solverCmd)
     create = asyncio.create_subprocess_exec(
-            *solverCmd, b2x(eh.serialize()), # TODO or b2lx?
+            *solverCmd,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT)
     try:
