@@ -1,9 +1,20 @@
+import bitcoin.core as bcore
 from bitcoin.core import *
 from bitcoin.core.serialize import *
 import struct
 
 SOL_SIZE = 1344
 ZERO32 = b'\x00'*32
+
+class ZCoreMainParams(CoreMainParams):
+    GENESIS_BLOCK = None # TODO Still need to code CZBlock
+    PROOF_OF_WORK_LIMIT = 0x7ffff << 8*28
+
+class ZCoreTestNetParams(ZCoreMainParams, CoreTestNetParams):
+    pass
+
+# Inject zcash core parameters into bitcoin lib
+bcore.coreparams = ZCoreMainParams()
 
 class CEquihashHeader(Serializable): # TODO or make it ImmutableSerializable?
     """A Zcash Equihash solver block header - without solution"""
