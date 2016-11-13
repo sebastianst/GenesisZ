@@ -30,3 +30,5 @@ genesisEh = CEquihashHeader(nTime=1477641360, nBits=bits,
 genesis = CZBlockHeader.from_EquihashHeader(genesisEh, genesisSol)
 
 assert genesis.GetHash() == hashGenesis
+assert IsValidSolution(genesis)
+CheckProofOfWork(genesis.GetHash(), bits)
