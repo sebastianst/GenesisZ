@@ -143,10 +143,19 @@ def findValidSolution(eh, solverCmd):
             if IsValidSolution(eh, nonce, sol):
                 return (sol, nonce)
 
-    # TODO DUMMY
-    return 'solution'.encode('ascii'), b'\xde\xad'
+def parseSolutions(solver):
+    solLine = yield from solver.stdout.readline()
+    if not solLine.startswith('Nonce'):
+        raise Exception('Expected Nonce and solution count from solver, got ' +\
+                        stri(solLine))
+    _, nonce, solc, _ = line.split()
+    nonce = x(nonce[:-1]) # TODO or lx?
+    sols = []
+    for _ in range(int(solc)):
+        sol = yield from solver.stdout.readline()
+        sols.append(x(stri(sol)))
 
-
+    return (nonce, sols)
 
 if __name__ == "__main__":
     main()
