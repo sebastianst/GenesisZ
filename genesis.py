@@ -141,6 +141,7 @@ def findValidSolution(eh, solverCmd):
                 (len(sols), b2lx(nonce)))
         for sol in sols:
             if IsValidSolution(eh, nonce, sol):
+                solver.terminate()
                 return (sol, nonce)
 
 def parseSolutions(solver):
