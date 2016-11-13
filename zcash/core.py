@@ -86,13 +86,16 @@ class CZBlockHeader(CEquihashHeader):
         self.checkSolutionSize()
 
     @classmethod
-    def from_EquihashHeader(cls, equihashHeader=CEquihashHeader(), solution=b'\x00'*SOL_SIZE):
-        h = cls(equihashHeader.nVersion, equihashHeader.hashPrevBlock,
+    def from_EquihashHeader(cls, equihashHeader=CEquihashHeader(),
+            solution=b'\x00'*SOL_SIZE, nonce=None):
+        """Returns a CZBlockHeader object extending the passed equihash header
+        by nonce and solution. If nonce is ommited, it will be taken from the
+        equihash header."""
+        if not nonce:
+            nonce = equihashHeader.nNonce
+        return cls(equihashHeader.nVersion, equihashHeader.hashPrevBlock,
                 equihashHeader.hashMerkleRoot, equihashHeader.hashReserved,
-                equihashHeader.nTime, equihashHeader.nBits, equihashHeader.nNonce)
-        object.__setattr__(h, 'solution', solution)
-        h.checkSolutionSize()
-        return h
+                equihashHeader.nTime, equihashHeader.nBits, nonce, solution)
 
     @classmethod
     def stream_deserialize(cls, f):
