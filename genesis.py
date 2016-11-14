@@ -56,7 +56,7 @@ def parseArgs():
             help="unix time to set in block header (defaults to current time)")
     parser.add_argument("-z", "--timestamp", dest="timestamp",
             default="The Economist 2016-10-29 Known unknown: Another crypto-currency is born. BTC#436254 0000000000000000044f321997f336d2908cf8c8d6893e88dbf067e2d949487d ETH#2521903 483039a6b6bd8bd05f0584f9a078d075e454925eb71c1f13eaff59b405a721bb DJIA close on 27 Oct 2016: 18,169.68",
-            help="the pszTimestamp found in the input transaction script. Will be blake2s'd and then prefixed by coin name")
+            help="the pszTimestamp found in the input coinbase transaction script. Will be blake2s'd and then prefixed by coin name")
     parser.add_argument("-C", "--coinname", dest="coinname", default="Zcash",
             help="the coin name prepends the blake2s hash of timestamp in pszTimestamp")
     parser.add_argument("-n", "--nonce", dest="nonce", default=b'\x00'*32,
@@ -64,15 +64,16 @@ def parseArgs():
             " equihash solution; parsed as hex")
     parser.add_argument("-p", "--pubkey", dest="pubkey", type=x,
             default=x("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f"),
-            help="the pubkey found in the output script")
+            help="the pubkey found in the output transaction script")
     parser.add_argument("-b", "--bits", dest="bits", type=int,
             default=0x1f07ffff,
             help="the target in compact representation, defining a difficulty of 1")
     parser.add_argument("-V", "--value", dest="value", default=0, type=int,
             help="output transaction value in zatoshi (1 ZEC = 100000000 zatoshi)")
     parser.add_argument("-s", "--solver", dest="solver",
-            type=split, default=split("sa-solver -n 99999 -i"),
-            help="Equihash solver command; must accept the block header in hex as argument.")
+            type=split, default=split("sa-solver --nonces 99999 -i"),
+            help="silentarmy solver command; must accept the serialized block"
+            " header in hex(RPC byte order) as argument.")
     parser.add_argument("-v", "--verbose",
             dest="verbose", action="store_true",
             help="verbose mode")
