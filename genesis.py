@@ -154,7 +154,7 @@ async def eatBanner(solver):
     verb(banner)
 
 async def parseSolutions(solver):
-    sols = []
+    sols, line = [], ''
     while True:
         line = await solver.stdout.readline()
         line = stri(line)
