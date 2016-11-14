@@ -148,16 +148,17 @@ def findValidSolution(eh, solverCmd):
                 return (sol, nonce)
 
 def parseSolutions(solver):
-    solLine = yield from solver.stdout.readline()
-    if not solLine.startswith('Nonce'):
-        raise Exception('Expected Nonce and solution count from solver, got ' +\
-                        stri(solLine))
+    sols = []
+    while True:
+        line = yield from solver.stdout.readline()
+        line = stri(line)
+        if line.startswith('Nonce'):
+            break
+        assert len(line) == SOL_SIZE, \
+                "Solver returned unexpected solution of size != %i" % SOL_SIZE
+        sols.append(x(line))
     _, nonce, solc, _ = line.split()
     nonce = x(nonce[:-1]) # TODO or lx?
-    sols = []
-    for _ in range(int(solc)):
-        sol = yield from solver.stdout.readline()
-        sols.append(x(stri(sol)))
 
     return (nonce, sols)
 
