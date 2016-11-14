@@ -148,6 +148,7 @@ async def findValidSolution(eh, solverCmd):
         for sol in sols:
             if IsValidSolution(eh, nonce, sol):
                 solver.terminate()
+                await solver.communicate() # .wait() would deadlock if pipe is full
                 return (sol, nonce)
 
 async def eatBanner(solver):
