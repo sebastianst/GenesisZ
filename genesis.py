@@ -132,9 +132,10 @@ def findValidSolution(eh, solverCmd):
     banner = b''
     while True:
         banner += yield from solver.stdout.readline()
-        if banner.startswith(b'Running'): # TODO Hardcoded last banner line!
+        banner = stri(banner)
+        if banner.startswith('Running'): # TODO Hardcoded last banner line!
             break
-    verb('Solver banner: ' + stri(banner))
+    verb('Solver banner: ' + banner)
 
     while True:
         nonce, sols = parseSolutions(solver)
