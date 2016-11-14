@@ -73,7 +73,7 @@ def parseArgs():
     parser.add_argument("-E", "--extra-nonce", dest="extranonce", type=int,
             default=None,
             help="Usually, the coinbase script contains the nBits as fixed first"
-            " argument, which in bitcoin is also referred to as extra nonce. This"
+            " data, which in bitcoin is also referred to as extra nonce. This"
             " conventional behaviour can be changed by specifying this parameter"
             " (not recommended).")
     parser.add_argument("-V", "--value", dest="value", default=0, type=int,
