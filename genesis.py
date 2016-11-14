@@ -24,9 +24,11 @@ def main():
     else:
         loop = asyncio.get_event_loop()
 
-    solution, nonce = loop.run_until_complete(findValidSolution(eh, args.solver))
-    print('Solution found!\nNonce: %s\n%s' % (b2lx(nonce), b2x(solution)))
-    loop.close()
+    try:
+        solution, nonce = loop.run_until_complete(findValidSolution(eh, args.solver))
+        print('Solution found!\nNonce: %s\n%s' % (b2lx(nonce), b2x(solution)))
+    finally:
+        loop.close()
 
 def warn(msg):
     sys.stderr.write(msg + '\n')
