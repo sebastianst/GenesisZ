@@ -112,7 +112,7 @@ def buildEquihashInputHeader(args):
 def stri(b):
     return b.decode('ascii').rstrip()
 
-def findValidSolution(eh, solverCmd):
+async def findValidSolution(eh, solverCmd):
     """find a valid equihash solution matching the target specified by nBits"""
     solverCmd.append(b2x(eh.serialize())) # TODO or b2lx?
     verb('Starting solver with command %s' % solverCmd)
@@ -121,7 +121,7 @@ def findValidSolution(eh, solverCmd):
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT)
     try:
-        solver = yield from create
+        solver = await create
         verb('Solver started.')
     except FileNotFoundError as e:
         warn("Could not find '%s' binary; is the path correct?" \
@@ -131,17 +131,11 @@ def findValidSolution(eh, solverCmd):
         os._exit(1)
     except Exception as e:
         fatal("Failed to execute '%s': %s" % (self.solver_binary, e))
-    # consume banner input until solutions pop up
-    banner = b''
-    while True:
-        banner += yield from solver.stdout.readline()
-        banner = stri(banner)
-        if banner.startswith('Running'): # TODO Hardcoded last banner line!
-            break
-    verb('Solver banner: ' + banner)
+
+    await eatBanner(solver)
 
     while True:
-        nonce, sols = parseSolutions(solver)
+        nonce, sols = await parseSolutions(solver)
         verb('Solver returned %i solutions for nonce %s' % \
                 (len(sols), b2lx(nonce)))
         for sol in sols:
@@ -149,10 +143,20 @@ def findValidSolution(eh, solverCmd):
                 solver.terminate()
                 return (sol, nonce)
 
-def parseSolutions(solver):
+async def eatBanner(solver):
+    # consume banner input until solutions pop up
+    banner = 'Solver banner:\n'
+    while True:
+        line = await solver.stdout.readline()
+        banner += stri(line) + '\n'
+        if line.startswith(b'Running'): # TODO Hardcoded last banner line!
+            break
+    verb(banner)
+
+async def parseSolutions(solver):
     sols = []
     while True:
-        line = yield from solver.stdout.readline()
+        line = await solver.stdout.readline()
         line = stri(line)
         if line.startswith('Nonce'):
             break
