@@ -154,8 +154,7 @@ async def findValidSolution(eh, solverCmd):
 async def eatBanner(solver):
     # consume banner input until solutions pop up
     banner = 'Solver banner:\n'
-    while True:
-        line = await solver.stdout.readline()
+    async for line in solver.stdout:
         banner += stri(line) + '\n'
         if line.startswith(b'Running'): # TODO Hardcoded last banner line!
             break
