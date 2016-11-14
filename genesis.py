@@ -70,6 +70,12 @@ def parseArgs():
     parser.add_argument("-b", "--bits", dest="bits", type=int,
             default=0x1f07ffff,
             help="the target in compact representation, defining a difficulty of 1")
+    parser.add_argument("-E", "--extra-nonce", dest="extranonce", type=int,
+            default=None,
+            help="Usually, the coinbase script contains the nBits as fixed first"
+            " argument, which in bitcoin is also referred to as extra nonce. This"
+            " conventional behaviour can be changed by specifying this parameter"
+            " (not recommended).")
     parser.add_argument("-V", "--value", dest="value", default=0, type=int,
             help="output transaction value in zatoshi (1 ZEC = 100000000 zatoshi)")
     parser.add_argument("-s", "--solver", dest="solver",
@@ -95,8 +101,9 @@ def buildEquihashInputHeader(args):
             blake2s(args.timestamp.encode('UTF-8')).hexdigest()
     verb("pszTimestamp: " + pszTimestamp)
     pk, bits = args.pubkey, args.bits
+    extranonce = args.extranonce if args.extranonce else bits
     # Input transaction
-    scriptSig = CScript() + bits + b'\x04' + pszTimestamp.encode('UTF-8')
+    scriptSig = CScript() + extranonce + b'\x04' + pszTimestamp.encode('UTF-8')
     txin=CMutableTxIn(scriptSig=scriptSig)
     # Output transaction
     scriptPubKey = CScript() + pk + OP_CHECKSIG
