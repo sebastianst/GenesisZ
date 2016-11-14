@@ -156,7 +156,7 @@ def parseSolutions(solver):
         line = stri(line)
         if line.startswith('Nonce'):
             break
-        assert len(line) == SOL_SIZE, \
+        assert len(line) == SOL_SIZE*2, \
                 "Solver returned unexpected solution of size != %i" % SOL_SIZE
         sols.append(x(line))
     _, nonce, solc, _ = line.split()
