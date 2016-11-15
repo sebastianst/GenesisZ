@@ -27,6 +27,8 @@ def main():
     try:
         solution, nonce = loop.run_until_complete(findValidSolution(eh, args.solver))
         print('Solution found!\nNonce: %s\n%s' % (b2lx(nonce), b2x(solution)))
+    except SolverStopped as e:
+        warn('%s\nExiting.' % e)
     finally:
         loop.close()
 
@@ -149,8 +151,6 @@ async def findValidSolution(eh, solverCmd):
             for sol in sols:
                 if IsValidSolution(eh, nonce, sol):
                     return (sol, nonce)
-    except SolverStopped as e:
-        warn('%s\nExiting.' % e)
     finally:
         solver.terminate()
         await solver.communicate() # .wait() would deadlock if pipe is full
