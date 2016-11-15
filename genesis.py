@@ -150,7 +150,7 @@ async def findValidSolution(eh, solverCmd):
                 if IsValidSolution(eh, nonce, sol):
                     return (sol, nonce)
     except SolverStopped as e:
-        warn(e.msg + '\nExiting.')
+        warn('%s\nExiting.' % e)
     finally:
         solver.terminate()
         await solver.communicate() # .wait() would deadlock if pipe is full
