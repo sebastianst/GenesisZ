@@ -156,7 +156,8 @@ async def eatBanner(solver):
     banner = 'Solver banner:\n'
     async for line in solver.stdout:
         banner += stri(line) + '\n'
-        if line.startswith(b'Running'): # TODO Hardcoded last banner line!
+        # Last line before solutions pop up in sa-sovlver
+        if line.startswith(b'Running'):
             break
     verb(banner)
 
