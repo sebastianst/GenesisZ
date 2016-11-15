@@ -162,8 +162,7 @@ async def eatBanner(solver):
 
 async def parseSolutions(solver):
     sols, line = [], ''
-    while True:
-        line = await solver.stdout.readline()
+    async for line in solver.stdout:
         line = stri(line)
         if line.startswith('Nonce'):
             break
