@@ -141,15 +141,19 @@ async def findValidSolution(eh, solverCmd):
 
     await eatBanner(solver)
 
-    while True:
-        nonce, sols = await parseSolutions(solver)
-        verb('Solver returned %i solutions for nonce %s' % \
-                (len(sols), b2lx(nonce)))
-        for sol in sols:
-            if IsValidSolution(eh, nonce, sol):
-                solver.terminate()
-                await solver.communicate() # .wait() would deadlock if pipe is full
-                return (sol, nonce)
+    try:
+        while True:
+            nonce, sols = await parseSolutions(solver)
+            verb('Solver returned %i solutions for nonce %s' % \
+                    (len(sols), b2lx(nonce)))
+            for sol in sols:
+                if IsValidSolution(eh, nonce, sol):
+                    return (sol, nonce)
+    except SolverStopped as e:
+        warn(e.msg + '\nExiting.')
+    finally:
+        solver.terminate()
+        await solver.communicate() # .wait() would deadlock if pipe is full
 
 async def eatBanner(solver):
     # consume banner input until solutions pop up
@@ -167,6 +171,8 @@ async def parseSolutions(solver):
         line = stri(line)
         if line.startswith('Nonce'):
             break
+        if line.startswith('Total'):
+            raise SolverStopped('Solver stopped before valid solution found.')
         assert len(line) == SOL_SIZE*2, \
                 "Solver returned unexpected solution of size != %i" % SOL_SIZE
         sols.append(x(line))
@@ -174,6 +180,9 @@ async def parseSolutions(solver):
     nonce = x(nonce[:-1]) # TODO or lx?
 
     return (nonce, sols)
+
+class SolverStopped(Exception):
+    pass
 
 if __name__ == "__main__":
     main()
