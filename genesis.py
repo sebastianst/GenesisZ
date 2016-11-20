@@ -9,11 +9,9 @@ from bitcoin.core.script import CScript, OP_CHECKSIG
 from zcash.core import *
 from pyblake2 import blake2s
 
-args = {}
 verbose = False
 
 def main():
-    global args
     args = parseArgs()
 
     eh = buildEquihashInputHeader(args)
