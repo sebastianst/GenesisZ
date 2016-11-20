@@ -2,11 +2,12 @@
 
 import argparse
 import asyncio
-import sys, os, time
+import sys, os, time, re
 
 from bitcoin.core import *
 from bitcoin.core.script import CScript, OP_CHECKSIG
 from zcash.core import *
+import blockexplorer as be
 from pyblake2 import blake2s
 
 verbose = False
@@ -58,7 +59,12 @@ def parseArgs():
             help="unix time to set in block header (defaults to current time)")
     parser.add_argument("-z", "--timestamp", dest="timestamp",
             default="The Economist 2016-10-29 Known unknown: Another crypto-currency is born. BTC#436254 0000000000000000044f321997f336d2908cf8c8d6893e88dbf067e2d949487d ETH#2521903 483039a6b6bd8bd05f0584f9a078d075e454925eb71c1f13eaff59b405a721bb DJIA close on 27 Oct 2016: 18,169.68",
-            help="the pszTimestamp found in the input coinbase transaction script. Will be blake2s'd and then prefixed by coin name")
+            help="""the pszTimestamp found in the input coinbase transaction
+            script. Will be blake2s'd and then prefixed by coin name. Default
+            is Zcash's mainnet pszTimestamp. You may use tokens of the form
+            {XYZ}, which will be replaced by the current block index and hash
+            of coin XZY (BTC, ETH or ZEC). Always the latest block is retrieved,
+            regardless of time argument.""")
     parser.add_argument("-C", "--coinname", dest="coinname", default="Zcash",
             help="the coin name prepends the blake2s hash of timestamp in pszTimestamp")
     parser.add_argument("-n", "--nonce", dest="nonce", default=b'\x00'*32,
@@ -97,8 +103,13 @@ def parseArgs():
     return args
 
 def buildEquihashInputHeader(args):
+    # Build the timestamp. First, replace all {XYZ}
+    timestamp = args.timestamp
+    for coin in re.findall(r'\{[A-Z]{3}\}', timestamp):
+            timestamp = timestamp.replace(coin, get_latest_block_str(coin[1:4]))
+    verb("timestamp after substitution: " + timestamp)
     pszTimestamp = args.coinname + \
-            blake2s(args.timestamp.encode('UTF-8')).hexdigest()
+            blake2s(timestamp.encode('UTF-8')).hexdigest()
     verb("pszTimestamp: " + pszTimestamp)
     pk, bits = args.pubkey, args.bits
     extranonce = args.extranonce if args.extranonce else bits
@@ -115,6 +126,9 @@ def buildEquihashInputHeader(args):
 
     return CEquihashHeader(nTime=args.time, nBits=bits,
         nNonce=args.nonce, hashMerkleRoot=txhash)
+
+def get_latest_block_str(coin):
+    return '%s#%i %s' % (coin, *be.get_latest(coin))
 
 def stri(b):
     return b.decode('ascii').rstrip()
