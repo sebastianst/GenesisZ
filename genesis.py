@@ -42,7 +42,8 @@ def fatal(msg):
 
 def verb(msg):
     if verbose:
-        sys.stderr.write(msg + '\n')
+        # sys.stderr.write(msg + '\n')
+        print(msg)
 
 def parseArgs():
     def lbytes32(s):
