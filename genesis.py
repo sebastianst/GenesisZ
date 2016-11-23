@@ -78,6 +78,8 @@ def parseArgs():
             {XYZ}, which will be replaced by the current block index and hash
             of coin XZY (BTC, ETH or ZEC). Always the latest block is retrieved,
             regardless of time argument.""")
+    parser.add_argument("-Z", "--pszTimestamp", dest="pszTimestamp", default=None,
+            help="Specify the pszTimestamp directly. Will ignore options -C and -z")
     parser.add_argument("-n", "--nonce", dest="nonce", default=b'\x00'*32,
             type=lbytes32, help="nonce to start with when searching for a valid"
             " equihash solution; parsed as hex")
@@ -117,13 +119,8 @@ def parseArgs():
     return args
 
 def buildEquihashInputHeader(args):
-    # Build the timestamp. First, replace all {XYZ}
-    timestamp = args.timestamp
-    for coin in re.findall(r'\{[A-Z]{3}\}', timestamp):
-            timestamp = timestamp.replace(coin, get_latest_block_str(coin[1:4]))
-    verb("timestamp after substitution: " + timestamp)
-    pszTimestamp = args.coinname + \
-            blake2s(timestamp.encode('UTF-8')).hexdigest()
+    pszTimestamp = args.pszTimestamp if args.pszTimestamp else \
+            build_pszTimestamp(args.coinname, args.timestamp)
     verb("pszTimestamp: " + pszTimestamp)
     pk, bits = args.pubkey, args.bits
     extranonce = args.extranonce if args.extranonce else bits
@@ -140,6 +137,14 @@ def buildEquihashInputHeader(args):
 
     return CEquihashHeader(nTime=args.time, nBits=bits,
         nNonce=args.nonce, hashMerkleRoot=txhash)
+
+def build_pszTimestamp(coinname, timestamp):
+    # Build the timestamp. First, replace all {XYZ}
+    for coin in re.findall(r'\{[A-Z]{3}\}', timestamp):
+            timestamp = timestamp.replace(coin, get_latest_block_str(coin[1:4]))
+    verb("timestamp after substitution: " + timestamp)
+    return args.coinname + \
+            blake2s(timestamp.encode('UTF-8')).hexdigest()
 
 def get_latest_block_str(coin):
     return '%s#%i %s' % (coin, *be.get_latest(coin))
