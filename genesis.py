@@ -25,7 +25,9 @@ def main():
 
     try:
         solution, nonce = loop.run_until_complete(findValidSolution(eh, args.solver))
-        print('Solution found!\nNonce: %s\n%s' % (b2lx(nonce), b2x(solution)))
+        h = CZBlockHeader.from_EquihashHeader(eh, solution, nonce)
+        print('Solution found!\nHeader Hash: %s\nNonce: %s\n%s' %\
+                (b2lx(h.GetHash()), b2lx(nonce), b2x(solution)))
     except SolverStopped as e:
         warn('%s\nExiting.' % e)
     finally:
