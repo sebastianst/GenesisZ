@@ -8,13 +8,30 @@ ZERO32 = b'\x00'*32
 
 class ZCoreMainParams(CoreMainParams):
     GENESIS_BLOCK = None # TODO Still need to code CZBlock
-    PROOF_OF_WORK_LIMIT = 0x7ffff << 8*28
+    PROOF_OF_WORK_LIMIT = 0x0007ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 
 class ZCoreTestNetParams(ZCoreMainParams, CoreTestNetParams):
-    pass
+    PROOF_OF_WORK_LIMIT = 0x07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 
+"""Master global setting for what core chain params we're using"""
 # Inject zcash core parameters into bitcoin lib
 bcore.coreparams = ZCoreMainParams()
+
+def SelectCoreParams(name):
+    """Select the core chain parameters to use
+
+    Don't use this directly, use zcash.SelectParams() instead so both
+    consensus-critical and general parameters are set properly.
+    """
+    if name == 'mainnet':
+        bcore.coreparams = ZCoreMainParams()
+    elif name == 'testnet':
+        bcore.coreparams = ZCoreTestNetParams()
+    elif name == 'regtest':
+        bcore.coreparams = CoreRegTestParams() # TODO Zcash regtest
+    else:
+        raise ValueError('Unknown chain %r' % name)
+
 
 class CEquihashHeader(Serializable): # TODO or make it ImmutableSerializable?
     """A Zcash Equihash solver block header - without solution"""
