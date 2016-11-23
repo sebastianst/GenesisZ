@@ -52,6 +52,11 @@ def parseArgs():
     def split(s):
         """Runs s.split()"""
         return s.split()
+    def smartint(i):
+        if i.startswith('0x'):
+            return int(i, 16)
+        else:
+            return int(i, 10)
 
     parser = argparse.ArgumentParser(description="This script uses any Equihash solver to find a solution for the specified genesis block")
     parser.add_argument("-c", "--chainparams", dest="chain", default="mainnet",
@@ -76,10 +81,10 @@ def parseArgs():
     parser.add_argument("-p", "--pubkey", dest="pubkey", type=x,
             default=x("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f"),
             help="the pubkey found in the output transaction script")
-    parser.add_argument("-b", "--bits", dest="bits", type=int,
+    parser.add_argument("-b", "--bits", dest="bits", type=smartint,
             default=0x1f07ffff,
             help="the target in compact representation, defining a difficulty of 1")
-    parser.add_argument("-E", "--extra-nonce", dest="extranonce", type=int,
+    parser.add_argument("-E", "--extra-nonce", dest="extranonce", type=smartint,
             default=None,
             help="Usually, the coinbase script contains the nBits as fixed first"
             " data, which in bitcoin is also referred to as extra nonce. This"
