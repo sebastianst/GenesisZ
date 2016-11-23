@@ -205,7 +205,8 @@ async def parseSolutions(solver):
         if line.startswith('Total'):
             raise SolverStopped('Solver stopped before valid solution found.')
         assert len(line) == SOL_SIZE*2, \
-                "Solver returned unexpected solution of size != %i" % SOL_SIZE
+                "Solver returned unexpected solution of size != %i:\n%s" %\
+                (SOL_SIZE, line)
         sols.append(x(line))
     _, nonce, solc, _ = line.split()
     nonce = x(nonce[:-1]) # TODO or lx?
