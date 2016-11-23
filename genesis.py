@@ -54,9 +54,14 @@ def parseArgs():
         return s.split()
 
     parser = argparse.ArgumentParser(description="This script uses any Equihash solver to find a solution for the specified genesis block")
+    parser.add_argument("-c", "--chainparams", dest="chain", default="mainnet",
+            choices=["mainnet", "testnet", "regtest"],
+            help="Select the core chain parameters for PoW limit. May be mainnet, testnet, or regtest")
     parser.add_argument("-t", "--time",
             dest="time", action="store", type=int, default=int(time.time()),
             help="unix time to set in block header (defaults to current time)")
+    parser.add_argument("-C", "--coinname", dest="coinname", default="Zcash",
+            help="the coin name prepends the blake2s hash of timestamp in pszTimestamp")
     parser.add_argument("-z", "--timestamp", dest="timestamp",
             default="The Economist 2016-10-29 Known unknown: Another crypto-currency is born. BTC#436254 0000000000000000044f321997f336d2908cf8c8d6893e88dbf067e2d949487d ETH#2521903 483039a6b6bd8bd05f0584f9a078d075e454925eb71c1f13eaff59b405a721bb DJIA close on 27 Oct 2016: 18,169.68",
             help="""the pszTimestamp found in the input coinbase transaction
@@ -65,8 +70,6 @@ def parseArgs():
             {XYZ}, which will be replaced by the current block index and hash
             of coin XZY (BTC, ETH or ZEC). Always the latest block is retrieved,
             regardless of time argument.""")
-    parser.add_argument("-C", "--coinname", dest="coinname", default="Zcash",
-            help="the coin name prepends the blake2s hash of timestamp in pszTimestamp")
     parser.add_argument("-n", "--nonce", dest="nonce", default=b'\x00'*32,
             type=lbytes32, help="nonce to start with when searching for a valid"
             " equihash solution; parsed as hex")
@@ -81,7 +84,7 @@ def parseArgs():
             help="Usually, the coinbase script contains the nBits as fixed first"
             " data, which in bitcoin is also referred to as extra nonce. This"
             " conventional behaviour can be changed by specifying this parameter"
-            " (not recommended).")
+            " (not recommended for mainnet, useful for testnet).")
     parser.add_argument("-V", "--value", dest="value", default=0, type=int,
             help="output transaction value in zatoshi (1 ZEC = 100000000 zatoshi)")
     parser.add_argument("-s", "--solver", dest="solver",
@@ -95,7 +98,10 @@ def parseArgs():
     args = parser.parse_args()
     global verbose
     verbose = args.verbose
+    SelectCoreParams(args.chain)
 
+    verb('Chain: ' + args.chain)
+    verb('Time: %i' % args.time)
     verb('Start Nonce: ' + b2lx(args.nonce))
     verb('Pubkey: ' + b2x(args.pubkey))
     verb('Solver: %s' % args.solver)
