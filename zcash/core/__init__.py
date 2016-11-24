@@ -16,7 +16,7 @@ class ZCoreTestNetParams(ZCoreMainParams, CoreTestNetParams):
 
 class ZCoreRegTestParams(ZCoreTestNetParams, CoreRegTestParams):
     N, K = 48, 5
-    SOL_SIZE = 36
+    SOL_SIZE = 36 # 9 * 4
     PROOF_OF_WORK_LIMIT = 0x0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f
 
 """Master global setting for what core chain params we're using"""
