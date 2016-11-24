@@ -3,19 +3,26 @@ from bitcoin.core import *
 from bitcoin.core.serialize import *
 import struct
 
-SOL_SIZE = 1344
 ZERO32 = b'\x00'*32
 
 class ZCoreMainParams(CoreMainParams):
+    N, K = 200, 9
+    SOL_SIZE = 1344 # (n/(k+1)+1) *2^k /8
     GENESIS_BLOCK = None # TODO Still need to code CZBlock
     PROOF_OF_WORK_LIMIT = 0x0007ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 
 class ZCoreTestNetParams(ZCoreMainParams, CoreTestNetParams):
     PROOF_OF_WORK_LIMIT = 0x07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 
+class ZCoreRegTestParams(ZCoreTestNetParams, CoreRegTestParams):
+    N, K = 48, 5
+    SOL_SIZE = 36
+    PROOF_OF_WORK_LIMIT = 0x0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f
+
 """Master global setting for what core chain params we're using"""
 # Inject zcash core parameters into bitcoin lib
 bcore.coreparams = ZCoreMainParams()
+coreparams = ZCoreMainParams() # internal pointer for shorter access...
 
 def SelectCoreParams(name):
     """Select the core chain parameters to use
@@ -25,10 +32,13 @@ def SelectCoreParams(name):
     """
     if name == 'mainnet':
         bcore.coreparams = ZCoreMainParams()
+        coreparams = ZCoreMainParams()
     elif name == 'testnet':
         bcore.coreparams = ZCoreTestNetParams()
+        coreparams = ZCoreTestNetParams()
     elif name == 'regtest':
-        bcore.coreparams = CoreRegTestParams() # TODO Zcash regtest
+        bcore.coreparams = ZCoreRegTestParams()
+        coreparams = ZCoreRegTestParams()
     else:
         raise ValueError('Unknown chain %r' % name)
 
@@ -92,11 +102,11 @@ class CZBlockHeader(CEquihashHeader):
     def checkSolutionSize(self):
         # Currently (v. 4), the only accepted solution size is 1344
         if self.nVersion == 4:
-            assert len(self.solution) == SOL_SIZE
+            assert len(self.solution) == coreparams.SOL_SIZE
 
     def __init__(self, nVersion=4, hashPrevBlock=ZERO32,
             hashMerkleRoot=ZERO32, hashReserved=ZERO32, nTime=0, nBits=0,
-            nNonce=ZERO32, solution=b'\x00'*SOL_SIZE):
+            nNonce=ZERO32, solution=b'\x00'*coreparams.SOL_SIZE):
         super().__init__(nVersion, hashPrevBlock, hashMerkleRoot, hashReserved,
                 nTime, nBits, nNonce)
         object.__setattr__(self, 'solution', solution)
@@ -104,7 +114,7 @@ class CZBlockHeader(CEquihashHeader):
 
     @classmethod
     def from_EquihashHeader(cls, equihashHeader=CEquihashHeader(),
-            solution=b'\x00'*SOL_SIZE, nonce=None):
+            solution=b'\x00'*coreparams.SOL_SIZE, nonce=None):
         """Returns a CZBlockHeader object extending the passed equihash header
         by nonce and solution. If nonce is ommited, it will be taken from the
         equihash header."""
