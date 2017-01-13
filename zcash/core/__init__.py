@@ -21,7 +21,7 @@ class ZCoreRegTestParams(ZCoreTestNetParams, CoreRegTestParams):
 
 """Master global setting for what core chain params we're using"""
 # Inject zcash core parameters into bitcoin lib
-bcore.coreparams = ZCoreMainParams()
+bcore.coreparams = ZCoreMainParams() # TODO Use SelectParams in __init__ at startup
 coreparams = ZCoreMainParams() # internal pointer for shorter access...
 
 def SelectCoreParams(name):
@@ -30,6 +30,7 @@ def SelectCoreParams(name):
     Don't use this directly, use zcash.SelectParams() instead so both
     consensus-critical and general parameters are set properly.
     """
+    global coreparams
     if name == 'mainnet':
         bcore.coreparams = ZCoreMainParams()
         coreparams = ZCoreMainParams()
