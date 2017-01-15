@@ -1,5 +1,6 @@
 # GenesisZ
 Zcash (forks) genesis block mining script. Runs an external miner for finding valid Equihash solutions.
+Inspired by [GenesisH0](https://github.com/lhartikk/GenesisH0), but written from scratch.
 
 ## Features
 - Modify every parameter that influences the block header hash (see _Usage_)
