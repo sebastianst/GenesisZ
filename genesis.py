@@ -143,7 +143,7 @@ def build_pszTimestamp(coinname, timestamp):
     for coin in re.findall(r'\{[A-Z]{3}\}', timestamp):
             timestamp = timestamp.replace(coin, get_latest_block_str(coin[1:4]))
     verb("timestamp after substitution: " + timestamp)
-    return args.coinname + \
+    return coinname + \
             blake2s(timestamp.encode('UTF-8')).hexdigest()
 
 def get_latest_block_str(coin):
