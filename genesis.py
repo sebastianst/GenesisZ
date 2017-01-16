@@ -208,16 +208,16 @@ async def eatBanner(solver):
     verb(banner)
 
 async def parseSolutions(solver):
-    sols, line = [], ''
+    sols, line, sol_size = [], '', GetSolutionSize()
     async for line in solver.stdout:
         line = stri(line)
         if line.startswith('Nonce'):
             break
         if line.startswith('Total'):
             raise SolverStopped('Solver stopped before valid solution found.')
-        assert len(line) == SOL_SIZE*2, \
+        assert len(line) == sol_size*2, \
                 "Solver returned unexpected solution of size != %i:\n%s" %\
-                (SOL_SIZE, line)
+                (sol_size, line)
         sols.append(x(line))
     _, nonce, solc, _ = line.split()
     nonce = x(nonce[:-1]) # TODO or lx?
