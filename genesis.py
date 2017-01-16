@@ -93,7 +93,7 @@ def parseArgs():
             help="Specify the pszTimestamp directly. Will ignore options -C and -z")
     parser.add_argument("-n", "--nonce", dest="nonce", default=b'\x00'*32,
             type=lbytes32, help="nonce to start with when searching for a valid"
-            " equihash solution; parsed as hex")
+            " equihash solution; parsed as hex, leading zeros may be omitted.")
     parser.add_argument("-p", "--pubkey", dest="pubkey", type=x,
             default=x("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f"),
             help="the pubkey found in the output transaction script")
