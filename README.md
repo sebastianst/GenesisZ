@@ -10,13 +10,16 @@ Zcash (forks) genesis block mining script. Runs an external miner for finding va
 ## Getting started
 Clone this repo, create a virtualenv and install dependencies with pip:
 ```bash
-git clone https://github.com/sebastianst/GenesisZ
+git clone --recursive https://github.com/sebastianst/GenesisZ
 virtualenv GenesisZ
 cd GenesisZ
 source bin/activate
 pip install -r requirements.txt
 ```
 Make sure you have a working and supported equihash solver. Currently, only the [silent army](https://github.com/mbevand/silentarmy) solver is supported.
+
+#### python-zcashlib submodule
+Note that the zcashlib is used as a submodule, since I haven't uploaded it to PyPI yet (and because it's easier for the current interdependent development). That's why you must use the `--recursive` flag during cloning. When you update this repo, don't forget to update the submodule as well, i.e., run `git pull && git submodule update` to update.
 
 ## Examples
 #### Zcash mainnet
