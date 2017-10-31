@@ -9,10 +9,10 @@ Inspired by [GenesisH0](https://github.com/lhartikk/GenesisH0), but written from
 - Uses the [`python-zcashlib`](https://github.com/sebastianst/python-zcashlib), which is a (still very much unfinished) extension of the well-known [`python-bitcoinlib`](https://github.com/petertodd/python-bitcoinlib).
 
 ## Getting started
-Clone this repo, create a virtualenv and install dependencies with pip:
+Clone this repo, create a **python 3** virtualenv and install dependencies with pip:
 ```bash
 git clone --recursive https://github.com/sebastianst/GenesisZ
-virtualenv GenesisZ
+virtualenv3 GenesisZ
 cd GenesisZ
 source bin/activate
 pip install -r requirements.txt
