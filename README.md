@@ -5,7 +5,7 @@ Inspired by [GenesisH0](https://github.com/lhartikk/GenesisH0), but written from
 ## Features
 - Modify every parameter that influences the block header hash (see _Usage_)
 - Sensible defaults
-- Placeholders of the form `{BTC}`, `{ETH}` or `{ZEC}` in the `pszTimestamp` input string get translated to the currencie's latest block number and hash. 
+- Placeholders of the form `{BTC}`, `{ETH}` or `{ZEC}` in the `TIMESTAMP` input string get translated to the currencie's latest block number and hash.
 - Uses the [`python-zcashlib`](https://github.com/sebastianst/python-zcashlib), which is a (still very much unfinished) extension of the well-known [`python-bitcoinlib`](https://github.com/petertodd/python-bitcoinlib).
 
 ## Getting started
@@ -90,9 +90,11 @@ optional arguments:
 
 - [ ] Complete this TODO list
 - [ ] Regtest genesis block mining. silentarmy only supports the main/testnet parameters `N, K = 200, 9`. See also this [zcash forum thread](https://forum.z.cash/t/equihash-solver-for-n-k-48-5-other-than-default-200-9).
+- [ ] More structured and complete output of intermediate information and
+  results. Currently, you need to specify verbose output to see all necessary information.
 - [ ] Use solvers' native APIs instead of reading `stdout`
 - [ ] more examples (zcash testnet, zclassic)
-- [ ] Make block number selectable for the `pszTimestamp` placeholders. Like `{BTC:1234}` for block #1234. 
+- [ ] Make block number selectable for the `TIMESTAMP` placeholders. Like `{BTC:1234}` for block #1234.
 
 ## License
 Released under the GPLv3, see `LICENSE` file.
