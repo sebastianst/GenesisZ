@@ -37,8 +37,14 @@ tx = CMutableTransaction(vin=[txin], vout=[txout])
 
 assert tx.GetHash() == hashMerkleRoot
 
+nNonce = (b'\x00'*30+b'\x12\x57')[::-1]
 genesisEh = CEquihashHeader(nTime=1477641360, nBits=bits,
-        nNonce=(b'\x00'*30+b'\x12\x57')[::-1], hashMerkleRoot=tx.GetHash())
+        nNonce=nNonce, hashMerkleRoot=tx.GetHash())
+
+genesisSerEq += nNonce # append nonce
+assert genesisEh.serialize() == genesisSerEq, \
+        "Serialized EquihashHeader is:\n" + genesisEh.serialize().hex() + \
+        "\nexpected\n" + genesisSerEq.hex()
 
 genesis = CZBlockHeader.from_EquihashHeader(genesisEh, genesisSol)
 
