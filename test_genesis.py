@@ -35,11 +35,11 @@ scriptPubKey = CScript() + pk + OP_CHECKSIG
 txout = CMutableTxOut(nValue = 0, scriptPubKey = scriptPubKey)
 tx = CMutableTransaction(vin=[txin], vout=[txout])
 
-assert tx.GetHash() == hashMerkleRoot
+assert tx.GetTxid() == hashMerkleRoot
 
 nNonce = (b'\x00'*30+b'\x12\x57')[::-1]
 genesisEh = CEquihashHeader(nTime=1477641360, nBits=bits,
-        nNonce=nNonce, hashMerkleRoot=tx.GetHash())
+        nNonce=nNonce, hashMerkleRoot=tx.GetTxid())
 
 genesisSerEq += nNonce # append nonce
 assert genesisEh.serialize() == genesisSerEq, \
