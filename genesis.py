@@ -143,7 +143,7 @@ def buildEquihashInputHeader(args):
     txout = CMutableTxOut(nValue = args.value, scriptPubKey = scriptPubKey)
 
     tx = CMutableTransaction(vin=[txin], vout=[txout])
-    txhash = tx.GetHash()
+    txhash = tx.GetTxid()
     verb("TX/merkle root hash: " + b2lx(txhash))
 
     return CEquihashHeader(nTime=args.time, nBits=bits,
