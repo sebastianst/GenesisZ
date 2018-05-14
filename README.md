@@ -17,7 +17,10 @@ cd GenesisZ
 source bin/activate
 pip install -r requirements.txt
 ```
-Make sure you have a working and supported equihash solver. Currently, only the [silent army](https://github.com/mbevand/silentarmy) solver is supported.
+
+Make sure you have a working and supported equihash solver. Currently, the
+[silent army](https://github.com/mbevand/silentarmy) GPU solver (only for
+mainnet and testnet parameters `N,k=200,9`) and [tromp equihash](https://github.com/tromp/equihash) CPU solver are supported.
 
 #### python-zcashlib submodule
 Note that the zcashlib is used as a submodule, since I haven't uploaded it to PyPI yet (and because it's easier for the current interdependent development). That's why you must use the `--recursive` flag during cloning. When you update this repo, don't forget to update the submodule as well, i.e., run `git pull && git submodule update` to update.
@@ -26,18 +29,19 @@ Note that the zcashlib is used as a submodule, since I haven't uploaded it to Py
 #### Zcash mainnet
 Mine the zcash mainnet gensis block by calling
 ```bash
-./genesis.py -s "/path/to/sa-solver --nonces 4000 -i" -t 1477641360
+./genesis.py -s "/path/to/sa-solver" -r 5000 -t 1477641360
 ```
 or cheat, because you already know the right nonce:
 ```bash
-./genesis.py -s "/path/to/sa-solver --nonces 1 -i" -n 1257 -t 1477641360
+./genesis.py -s "/path/to/sa-solver" -n 1257 -t 1477641360
 ```
 
 ## Usage
 ```
 usage: genesis.py [-h] [-c {mainnet,testnet,regtest}] [-t TIME] [-C COINNAME]
-                  [-z TIMESTAMP] [-Z PSZTIMESTAMP] [-n NONCE] [-p PUBKEY]
-                  [-b BITS] [-E EXTRANONCE] [-V VALUE] [-s SOLVER] [-v]
+                  [-z TIMESTAMP] [-Z PSZTIMESTAMP] [-n NONCE] [-r ROUNDS]
+                  [-p PUBKEY] [-b BITS] [-E EXTRANONCE] [-V VALUE] [-s SOLVER]
+                  [-S {tromp,silentarmy}] [-v]
 
 This script uses any Equihash solver to find a solution for the specified
 genesis block
@@ -45,8 +49,8 @@ genesis block
 optional arguments:
   -h, --help            show this help message and exit
   -c {mainnet,testnet,regtest}, --chainparams {mainnet,testnet,regtest}
-                        Select the core chain parameters for PoW limit. May be
-                        mainnet, testnet, or regtest
+                        Select the core chain parameters for PoW limit and
+                        parameters N and K.
   -t TIME, --time TIME  unix time to set in block header (defaults to current
                         time)
   -C COINNAME, --coinname COINNAME
@@ -65,7 +69,10 @@ optional arguments:
                         -C and -z
   -n NONCE, --nonce NONCE
                         nonce to start with when searching for a valid
-                        equihash solution; parsed as hex
+                        equihash solution; parsed as hex, leading zeros may be
+                        omitted.
+  -r ROUNDS, --rounds ROUNDS
+                        how many nonces to check at most
   -p PUBKEY, --pubkey PUBKEY
                         the pubkey found in the output transaction script
   -b BITS, --bits BITS  the target in compact representation, defining a
@@ -80,16 +87,21 @@ optional arguments:
                         output transaction value in zatoshi (1 ZEC = 100000000
                         zatoshi)
   -s SOLVER, --solver SOLVER
-                        silentarmy solver command; must accept the serialized
-                        block header in hex(RPC byte order) as argument.
-  -v, --verbose         verbose mode
-
+                        path to solver binary. Currently supported are
+                        silentarmy (sa-solver) and Tromp (equi/equi485).
+                        Command line arguments may be passed, although that
+                        should be unnecessary.
+  -S {tromp,silentarmy}, --solver-type {tromp,silentarmy}
+                        Set the type of solver explicitly. Otherwise GenesisZ
+                        tries to infer the type from the binary name (equi* ->
+                        tromp, sa-solver -> silentarmy)
+  -v, --verbose         verbose output
 ```
 
 ## TODO
 
 - [ ] Complete this TODO list
-- [ ] Regtest genesis block mining. silentarmy only supports the main/testnet parameters `N, K = 200, 9`. See also this [zcash forum thread](https://forum.z.cash/t/equihash-solver-for-n-k-48-5-other-than-default-200-9).
+- [X] Regtest genesis block mining. silentarmy only supports the main/testnet parameters `N, K = 200, 9`. See also this [zcash forum thread](https://forum.z.cash/t/equihash-solver-for-n-k-48-5-other-than-default-200-9).
 - [ ] More structured and complete output of intermediate information and
   results. Currently, you need to specify verbose output to see all necessary information.
 - [ ] Use solvers' native APIs instead of reading `stdout`
