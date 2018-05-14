@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (C) 2016-2017 Sebastian Stammler
+# Copyright (C) 2016-2018 Sebastian Stammler
 #
 # This file is part of GenesisZ.
 #
@@ -21,7 +21,8 @@ from zcash.core import *
 import blockexplorer as be
 from pyblake2 import blake2s
 
-verbose = False
+from logger import warn, fatal, verb
+import logger
 
 def main():
     args = parseArgs()
@@ -43,18 +44,6 @@ def main():
         warn('%s\nExiting.' % e)
     finally:
         loop.close()
-
-def warn(msg):
-    sys.stderr.write(msg + '\n')
-
-def fatal(msg):
-    sys.stderr.write(msg + '\n')
-    sys.exit(1)
-
-def verb(msg):
-    if verbose:
-        # sys.stderr.write(msg + '\n')
-        print(msg)
 
 def parseArgs():
     def lbytes32(s):
@@ -117,8 +106,7 @@ def parseArgs():
             help="verbose mode")
 
     args = parser.parse_args()
-    global verbose
-    verbose = args.verbose
+    logger.verbose = args.verbose
     SelectCoreParams(args.chain)
 
     verb('Chain: ' + args.chain)
