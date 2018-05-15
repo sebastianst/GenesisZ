@@ -26,8 +26,9 @@ mainnet and testnet parameters `N,k=200,9`) and [tromp equihash](https://github.
 Note that the zcashlib is used as a submodule, since I haven't uploaded it to PyPI yet (and because it's easier for the current interdependent development). That's why you must use the `--recursive` flag during cloning. When you update this repo, don't forget to update the submodule as well, i.e., run `git pull && git submodule update` to update.
 
 ## Examples
-#### Zcash mainnet
-Mine the zcash mainnet gensis block by calling
+
+### Zcash mainnet
+Mine the zcash mainnet gensis block with the silentarmy solver by calling
 ```bash
 ./genesis.py -s "/path/to/sa-solver" -r 5000 -t 1477641360
 ```
@@ -35,6 +36,13 @@ or cheat, because you already know the right nonce:
 ```bash
 ./genesis.py -s "/path/to/sa-solver" -n 1257 -t 1477641360
 ```
+
+### Zcash testnet
+This time using Tromp's solver with 4 threads, checking up to 10 nonces.
+```bash
+./genesis.py -c testnet -t 1477648033 -b 0x2007ffff -E 0x1f07ffff -s '/path/to/equihash/equi' -T 4 -r 10
+```
+It will find the right solution for nonce `6`.
 
 ## Usage
 ```
