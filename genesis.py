@@ -30,7 +30,7 @@ def main():
 
     eh = build_EquihashInputHeader(args)
     if args.solver_type == 'tromp':
-        solver = TrompSolver(args.solver, eh, args.rounds, args.nonce)
+        solver = TrompSolver(args.solver, eh, args.rounds, args.nonce, args.threads)
     elif args.solver_type == 'silentarmy':
         solver = SilentarmySolver(args.solver, eh, args.rounds, args.nonce)
 
@@ -88,11 +88,6 @@ def parse_args():
             regardless of time argument.""")
     parser.add_argument("-Z", "--pszTimestamp", dest="pszTimestamp", default=None,
             help="Specify the pszTimestamp directly. Will ignore options -C and -z")
-    parser.add_argument("-n", "--nonce", dest="nonce", default=b'\x00'*32,
-            type=lbytes32, help="nonce to start with when searching for a valid"
-            " equihash solution; parsed as hex, leading zeros may be omitted.")
-    parser.add_argument("-r", "--rounds", dest="rounds", default=1,
-            type=int, help="how many nonces to check at most")
     parser.add_argument("-p", "--pubkey", dest="pubkey", type=x,
             default=x("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f"),
             help="the pubkey found in the output transaction script")
@@ -107,6 +102,11 @@ def parse_args():
             " (not recommended for mainnet, useful for testnet).")
     parser.add_argument("-V", "--value", dest="value", default=0, type=int,
             help="output transaction value in zatoshi (1 ZEC = 100000000 zatoshi)")
+    parser.add_argument("-n", "--nonce", dest="nonce", default=b'\x00'*32,
+            type=lbytes32, help="nonce to start with when searching for a valid"
+            " equihash solution; parsed as hex, leading zeros may be omitted.")
+    parser.add_argument("-r", "--rounds", dest="rounds", default=1,
+            type=int, help="how many nonces to check at most")
     parser.add_argument("-s", "--solver", dest="solver",
             type=split, default=split("../equihash/equi"),
             help="""path to solver binary. Currently supported are silentarmy
@@ -118,6 +118,8 @@ def parse_args():
             help="""Set the type of solver explicitly.
             Otherwise GenesisZ tries to infer the type from the binary name
             (equi* -> tromp, sa-solver -> silentarmy)""")
+    parser.add_argument("-T", "--threads", dest="threads", default=1,
+            type=int, help="How many CPU threads to use when solving with Tromp.")
     parser.add_argument("-v", "--verbose",
             dest="verbose", action="store_true",
             help="verbose output")
