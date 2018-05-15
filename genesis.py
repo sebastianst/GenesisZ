@@ -131,7 +131,7 @@ def parse_args():
     if not args.solver_type:
         if args.solver[0].endswith('sa-solver'):
             args.solver_type = 'silentarmy'
-        elif re.search(r'equi\d*$', args.solver[0]):
+        elif re.search(r'eq\w*$', args.solver[0]):
             args.solver_type = 'tromp'
         else:
             fatal("Couldn't infer solver type from binary name and type not set with -S")
