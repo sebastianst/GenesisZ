@@ -39,9 +39,9 @@ or cheat, because you already know the right nonce:
 ## Usage
 ```
 usage: genesis.py [-h] [-c {mainnet,testnet,regtest}] [-t TIME] [-C COINNAME]
-                  [-z TIMESTAMP] [-Z PSZTIMESTAMP] [-n NONCE] [-r ROUNDS]
-                  [-p PUBKEY] [-b BITS] [-E EXTRANONCE] [-V VALUE] [-s SOLVER]
-                  [-S {tromp,silentarmy}] [-v]
+                  [-z TIMESTAMP] [-Z PSZTIMESTAMP] [-p PUBKEY] [-b BITS]
+                  [-E EXTRANONCE] [-V VALUE] [-n NONCE] [-r ROUNDS]
+                  [-s SOLVER] [-S {tromp,silentarmy}] [-T THREADS] [-v]
 
 This script uses any Equihash solver to find a solution for the specified
 genesis block
@@ -67,12 +67,6 @@ optional arguments:
   -Z PSZTIMESTAMP, --pszTimestamp PSZTIMESTAMP
                         Specify the pszTimestamp directly. Will ignore options
                         -C and -z
-  -n NONCE, --nonce NONCE
-                        nonce to start with when searching for a valid
-                        equihash solution; parsed as hex, leading zeros may be
-                        omitted.
-  -r ROUNDS, --rounds ROUNDS
-                        how many nonces to check at most
   -p PUBKEY, --pubkey PUBKEY
                         the pubkey found in the output transaction script
   -b BITS, --bits BITS  the target in compact representation, defining a
@@ -86,6 +80,12 @@ optional arguments:
   -V VALUE, --value VALUE
                         output transaction value in zatoshi (1 ZEC = 100000000
                         zatoshi)
+  -n NONCE, --nonce NONCE
+                        nonce to start with when searching for a valid
+                        equihash solution; parsed as hex, leading zeros may be
+                        omitted.
+  -r ROUNDS, --rounds ROUNDS
+                        how many nonces to check at most
   -s SOLVER, --solver SOLVER
                         path to solver binary. Currently supported are
                         silentarmy (sa-solver) and Tromp (equi/equi485).
@@ -95,6 +95,8 @@ optional arguments:
                         Set the type of solver explicitly. Otherwise GenesisZ
                         tries to infer the type from the binary name (equi* ->
                         tromp, sa-solver -> silentarmy)
+  -T THREADS, --threads THREADS
+                        How many CPU threads to use when solving with Tromp.
   -v, --verbose         verbose output
 ```
 
