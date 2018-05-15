@@ -51,6 +51,15 @@ Using Tromp's `48,5` solver with
 ```
 will find the correct regtest solution for nonce `9`.
 
+### Zclassic mainnet
+
+Zclassic decided to use a custom extra nonce of `0x1d00ffff`. Let's mine their
+mainnet solution (already setting the right nonce to `0x00...021d`) with
+
+```bash
+./genesis.py -c mainnet -t 1478403829 -E 0x1d00ffff -C Zclassic -z "No taxation without representation. BTC #437541 - 00000000000000000397f175a94dd3f530b957182eb2a9f7b79a44a94a5e0450" -s '/path/to/equihash/equi' -T 4 -n 21d
+```
+
 ## Usage
 ```
 usage: genesis.py [-h] [-c {mainnet,testnet,regtest}] [-t TIME] [-C COINNAME]
