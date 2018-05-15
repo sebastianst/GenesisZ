@@ -5,7 +5,7 @@ Inspired by [GenesisH0](https://github.com/lhartikk/GenesisH0), but written from
 ## Features
 - Modify every parameter that influences the block header hash (see _Usage_)
 - Sensible defaults
-- Placeholders of the form `{BTC}`, `{ETH}` or `{ZEC}` in the `TIMESTAMP` input string get translated to the currencie's latest block number and hash.
+- Placeholders of the form `{BTC}`, `{ETH}` or `{ZEC}` in the `TIMESTAMP` input string get translated to the currency's latest block number and hash.
 - Uses the [`python-zcashlib`](https://github.com/sebastianst/python-zcashlib), which is a (still very much unfinished) extension of the well-known [`python-bitcoinlib`](https://github.com/petertodd/python-bitcoinlib).
 
 ## Getting started
