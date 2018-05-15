@@ -44,6 +44,13 @@ This time using Tromp's solver with 4 threads, checking up to 10 nonces.
 ```
 It will find the right solution for nonce `6`.
 
+### Zcash regtest
+Using Tromp's `48,5` solver with
+```bash
+./genesis.py -c regtest -t 1296688602 -b 0x200f0f0f -E 0x1f07ffff -s '/path/to/equihash/eq485' -T 4 -r 10
+```
+will find the correct regtest solution for nonce `9`.
+
 ## Usage
 ```
 usage: genesis.py [-h] [-c {mainnet,testnet,regtest}] [-t TIME] [-C COINNAME]
