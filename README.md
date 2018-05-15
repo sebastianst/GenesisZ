@@ -98,6 +98,16 @@ optional arguments:
   -v, --verbose         verbose output
 ```
 
+### Tromp solver
+Make sure to select the right binary with `-s` when using Tromp's equihash solver:
+
+\#threads | main/testnet (`N,K=200,9`) | regtest (`N,K=48,5`)
+----------|----------------------------|--------------------
+1         | `equi1`                    | `eq4851`
+>1        | `equi`                     | `eq485`
+
+Note that `make` only builds `equi{,1}`, so you have to run `make eq485{,1}` in Tromp's source directory if you need the solver for regtest.
+
 ## TODO
 
 - [ ] Complete this TODO list
